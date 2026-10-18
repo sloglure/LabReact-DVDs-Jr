@@ -1,23 +1,10 @@
-import React, { useState } from "react";
+import Button from "./Button";
+import Badge from "./Badge";
+import EmptyState from "./EmptyState";
+import { useState } from "react";
 
-const TaskList = ({ tareas, onCompletar, cargando, error }) => {
+const TaskList = ({ tareas, onCompletar, onEliminar, cargando, error }) => {
   const [filtro, setFiltro] = useState("todas");
-
-  if (cargando) {
-    return (
-      <div className="card">
-        <p>Cargando tareas...</p>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="card">
-        <p style={{ color: "red" }}>Error al cargar tareas: {error}</p>
-      </div>
-    );
-  }
 
   const tareasFiltradas = tareas.filter((t) => {
     if (filtro === "pendientes") return !t.completada;
@@ -25,44 +12,56 @@ const TaskList = ({ tareas, onCompletar, cargando, error }) => {
     return true;
   });
 
+  if (cargando) return <p>Cargando tareas...</p>;
+  if (error) return <p style={{ color: "red" }}>{error}</p>;
+
   return (
-    <div className="card">
-      <h2 className="section-title">Lista de Tareas</h2>
-      
+    <div>
+      {/* Botones de filtro */}
       <div style={{ display: "flex", gap: "8px", marginBottom: "12px" }}>
-        <button className="task-button" onClick={() => setFiltro("todas")}>Todas</button>
-        <button className="task-button" onClick={() => setFiltro("pendientes")}>Pendientes</button>
-        <button className="task-button" onClick={() => setFiltro("completadas")}>Completadas</button>
+        <Button label="📄 Todas" onClick={() => setFiltro("todas")} variant="primary" />
+        <Button label="⏳ Pendientes" onClick={() => setFiltro("pendientes")} variant="primary" />
+        <Button label="✅ Completadas" onClick={() => setFiltro("completadas")} variant="primary" />
       </div>
 
-      <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
-        {tareasFiltradas.map((tarea) => (
-          <li
-            key={tarea.id}
-            className="task-item"
-            style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}
-          >
-            <span
-              style={{
-                textDecoration: tarea.completada ? "line-through" : "none",
-                color: tarea.completada ? "#94a3b8" : "inherit",
-              }}
+      {tareasFiltradas.length === 0 ? (
+        <EmptyState icono="📭" mensaje="No hay tareas en esta categoría" />
+      ) : (
+        <ul style={{ listStyle: "none", padding: 0 }}>
+          {tareasFiltradas.map((tarea) => (
+            <li
+              key={tarea.id}
+              className="task-item"
+              style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}
             >
-              {tarea.titulo}
-            </span>
-            {tarea.completada ? (
-              <span>✔</span>
-            ) : (
-              <button className="task-button" onClick={() => onCompletar(tarea.id)}>
-                Completar
-              </button>
-            )}
-          </li>
-        ))}
-      </ul>
+              
+              {/* Título y Badge separados para que no se tache la etiqueta */}
+              <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                <Badge 
+                  texto={tarea.completada ? "completada" : "pendiente"}
+                  onClick={() => onCompletar(tarea.id)}
+                />
+                <span style={{ 
+                  textDecoration: tarea.completada ? "line-through" : "none", 
+                  color: tarea.completada ? "#94a3b8" : "inherit" 
+                }}>
+                  {tarea.titulo}
+                </span>
+              </div>
 
-      {tareasFiltradas.length === 0 && (
-        <p style={{ marginTop: "12px" }}>No hay tareas en esta categoria.</p>
+              {/* Ícono si completada, boton si pendiente */}
+              <div style={{ display: "flex", gap: "8px" }}>
+                {tarea.completada ? (
+                  <span>✅</span>
+                ) : (
+                  <Button label="Completar" onClick={() => onCompletar(tarea.id)} variant="primary" />
+                )}
+                {/* Este boton activa el modal */}
+                <Button label="Eliminar" onClick={() => onEliminar(tarea.id)} variant="danger" />
+              </div>
+            </li>
+          ))}
+        </ul>
       )}
     </div>
   );
