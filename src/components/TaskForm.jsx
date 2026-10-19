@@ -1,13 +1,16 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import Button from "./Button";
 
-const TaskForm = ({ onAgregar }) => {
+const TaskForm = ({ onAgregar, guardando }) => {
   const [titulo, setTitulo] = useState("");
   const [error, setError] = useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (titulo.trim() === "") {
-      setError("El titulo de la tarea no puede estar vacio.");
+    if (guardando) return;
+
+    if (titulo.trim().length < 3) {
+      setError("El titulo debe tener al menos 3 caracteres.");
       return;
     }
     onAgregar(titulo.trim());
@@ -16,20 +19,21 @@ const TaskForm = ({ onAgregar }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="card">
+    <div className="card">
       <h2 className="section-title">Agregar Nueva Tarea</h2>
-      <div style={{ display: "flex", gap: "8px", marginBottom: "8px" }}>
-        <input
-          type="text"
-          value={titulo}
-          onChange={(e) => setTitulo(e.target.value)}
-          placeholder="Ej: Estudiar para prueba de Fisica"
-          style={{ flex: 1, padding: "8px", borderRadius: "6px", border: "1px solid #cbd5e1" }}
-        />
-        <button type="submit" className="task-button">Agregar</button>
+      <form onSubmit={handleSubmit} className="task-form">
+          <input
+            type="text"
+            value={titulo}
+            onChange={(e) => { setTitulo(e.target.value); setError("")}}
+            placeholder="Escribe el título de la tarea..."
+            className="task-input"
+            disabled ={guardando}
+            />
+        <Button label={guardando ? "⏳..." :"Agregar"} variant= "primary" />
+      </form>
+      {error && <p className="form-error">{error}</p>}
       </div>
-      {error && <p style={{ color: "red", fontSize: "0.875rem", margin: 0 }}>{error}</p>}
-    </form>
   );
 };
 

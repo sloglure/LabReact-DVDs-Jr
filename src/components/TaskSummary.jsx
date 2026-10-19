@@ -1,17 +1,61 @@
-const TaskSummary = ({ total, completadas, pendientes }) => {
+const TaskSummary = ({ total, completadas, pendientes, mostrando, filtroActual }) => {
   return (
-    <div style={{ display: "flex", justifyContent: "space-around", textAlign: "center", padding: "10px 0" }}>
-      <div>
-        <span style={{ display: "block", fontSize: "2rem", fontWeight: "bold", color: "#1e40af" }}>{total}</span>
-        <span style={{ fontSize: "0.875rem", color: "#64748b", fontWeight: 500 }}>Total</span>
+    <div 
+      style={{ 
+        display: "flex",
+        gap: "24px", 
+        justifyContent: "center", 
+        flexWrap: "wrap", 
+      }}>
+      <div style={{ textAlign: "center"}}>
+        <p
+          style={{
+            fontSize: "2rem",
+            fontWeight: 700,
+            color: "#1d4ed8",
+            margin: 0,
+          }}>
+          {total}
+        </p>
+        <p style={{color: "#64748b", margin: 0}}>Total</p>
       </div>
-      <div>
-        <span style={{ display: "block", fontSize: "2rem", fontWeight: "bold", color: "#16a34a" }}>{completadas}</span>
-        <span style={{ fontSize: "0.875rem", color: "#64748b", fontWeight: 500 }}>Completadas</span>
+      <div style={{textAlign:"center"}}>
+        <p
+          style={{
+            fontSize:"2rem",
+            fontWeight: 700,
+            color:"#16a34a",
+            margin:0,
+          }}>
+            {completadas}
+        </p>
+        <p style={{color: "#64748b", margin: 0}}>Completadas</p>
       </div>
-      <div>
-        <span style={{ display: "block", fontSize: "2rem", fontWeight: "bold", color: "#f59e0b" }}>{pendientes}</span>
-        <span style={{ fontSize: "0.875rem", color: "#64748b", fontWeight: 500 }}>Pendientes</span>
+      <div style={{textAlign:"center"}}>
+        <p
+         style={{
+          fontSize: "2rem",
+          fontWeight: 700,
+          color: "#f59e0b",
+          margin:0,
+         }}>
+          {pendientes}
+        </p>
+        <p style={{color: "#64758b", margin: 0}}>Pendientes</p>
+      </div>
+      <div style={{textAlign: "center"}}>
+        <p
+          style={{
+            fontSize: "2rem",
+            fontWeight: 700,
+            color: "#0f172a",
+            margin:0
+          }}>
+          {mostrando}
+        </p>
+        <p style= {{color: "#64748b", margin:0}}>
+          Mostrando ({filtroActual})
+        </p>
       </div>
     </div>
   );

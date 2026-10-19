@@ -32,28 +32,28 @@ const TaskItem = ({tarea, onCompletar, onEliminar, onEditarTitulo}) => {
                 />
 
                 {isEditing ? (
-          <input
-            type="text"
-            value={editValue}
-            onChange={(e) => setEditValue(e.target.value)}
-            onBlur={handleGuardar}
-            onKeyDown={handleKeyDown}
-            autoFocus
-            style={{ padding: "4px 8px", borderRadius: "4px", border: "1px solid #cbd5e1", flex: 1, marginRight: "10px" }}
-          />
-        ) : (
-          <span 
-            onClick={() => setIsEditing(true)}
-            title="Haz clic para editar"
-            style={{ 
-              textDecoration: tarea.completada ? "line-through" : "none", 
-              color: tarea.completada ? "#94a3b8" : "inherit",
-              cursor: "text",
-              flex: 1
-            }}>
-            {tarea.titulo}
-          </span>
-        )}
+                    <input
+                        type="text"
+                        value={editValue}
+                        onChange={(e) => setEditValue(e.target.value)}
+                        onBlur={handleGuardar}
+                        onKeyDown={handleKeyDown}
+                        autoFocus
+                        style={{ padding: "4px 8px", borderRadius: "4px", border: "1px solid #cbd5e1", flex: 1, marginRight: "10px" }}
+                    />
+                ) : (
+                    <span 
+                    onDoubleClick={() => setIsEditing(true)}
+                    title="Haz clic para editar"
+                    style={{ 
+                        textDecoration: tarea.completada ? "line-through" : "none", 
+                        color: tarea.completada ? "#94a3b8" : "inherit",
+                        cursor: "text",
+                        flex: 1
+                    }}>
+                    {tarea.titulo}
+                </span>
+            )}
       </div>
 
       {/* Zona Derecha: Botones */}

@@ -1,111 +1,97 @@
 import { useState, useEffect } from "react";
-
-const API_URL = "https://jsonplaceholder.typicode.com/todos";
+import {
+  getTareas,
+  postTarea,
+  putTarea,
+  deleteTarea,
+  patchTarea,
+} from "../services/tareasService";
 
 const useTareas = () => {
   const [tareas, setTareas] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState(null);
+  const [guardando, setGuardando] = useState(false);
 
   useEffect(() => {
-    const cargarTareas = async () => {
+    const cargar = async () => {
       try {
-        const response = await fetch(`${API_URL}?_limit=10`);
-        if (!response.ok) {
-          throw new Error("Error al cargar las tareas");
-        }
-        const data = await response.json();
-        const tareasAdaptadas = data.map((item) => ({
-          id: item.id,
-          titulo: item.title,
-          completada: item.completed,
-        }));
-        setTareas(tareasAdaptadas);
+        const datos = await getTareas(10);
+        setTareas(
+          datos.map((t) => ({
+            id: t.id,
+            titulo: t.title,
+            completada: t.completed,
+          })),
+        );
       } catch (err) {
         setError(err.message);
       } finally {
         setCargando(false);
       }
     };
-
-    cargarTareas();
+    cargar();
   }, []);
 
   const crearTarea = async (titulo) => {
+    setGuardando(true);
     try {
-      const response = await fetch(API_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          title: titulo,
-          completed: false,
-          userId: 1,
-        }),
-      });
-      if (!response.ok) throw new Error("Error al crear la tarea");
-      const nueva = await response.json();
-      const tareaLocal = {
-        id: Date.now(),
-        titulo: nueva.title,
-        completada: nueva.completed,
-      };
-
-      setTareas((prev) => [tareaLocal, ...prev]);
+      const nueva = await postTarea(titulo);
+      setTareas((prev) => [
+        { id: Date.now(), titulo: nueva.title, completada: nueva.completed },
+        ...prev,
+      ]);
     } catch (err) {
       setError(err.message);
+    } finally {
+      setGuardando(false);
     }
   };
 
   const actualizarTarea = async (id, cambios) => {
+    setGuardando(true);
     try {
-      const response = await fetch(`${API_URL}/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(cambios),
-      });
-      if (!response.ok) throw new Error("Error al actualizar la tarea");
-
+      await putTarea(id, cambios);
       setTareas((prev) =>
         prev.map((t) => (t.id === id ? { ...t, ...cambios } : t)),
       );
     } catch (err) {
       setError(err.message);
+    } finally {
+      setGuardando(false);
     }
   };
 
   const eliminarTarea = async (id) => {
+    setGuardando(true);
     try {
-      const response = await fetch(`${API_URL}/${id}`, {
-        method: "DELETE",
-      });
-      if (!response.ok) throw new Error("Error al eliminar la tarea");
-
+      await deleteTarea(id);
       setTareas((prev) => prev.filter((t) => t.id !== id));
     } catch (err) {
       setError(err.message);
+    } finally {
+      setGuardando(false);
     }
   };
 
   const editarTitulo = async (id, nuevoTitulo) => {
+    setGuardando(true);
     try {
-      const response = await fetch(`${API_URL}/${id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title: nuevoTitulo }),
-      });
-      if (!response.ok) throw new Error("Error al editar el titulo");
-
+      await patchTarea(id, { title: nuevoTitulo });
       setTareas((prev) =>
         prev.map((t) => (t.id === id ? { ...t, titulo: nuevoTitulo } : t)),
       );
     } catch (err) {
       setError(err.message);
+    } finally {
+      setGuardando(false);
     }
   };
 
   return {
     tareas,
     cargando,
+    guardando,
     error,
     crearTarea,
     actualizarTarea,
