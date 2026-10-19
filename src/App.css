@@ -145,3 +145,12 @@ body {
   justify-content: center;
   margin-top: 20px;
 }
+
+.btn-success {
+  background-color: #198754;
+  color: #ffffff;
+}
+
+.btn-success:hover {
+  background-color: #146c43;
+}
